@@ -12,7 +12,13 @@ import (
 type User struct {
 	ID       int    `gorm:"primaryKey" json:"id"`
 	Username string `json:"username"`
-	Email    string `json:"email"`
+}
+
+func validateUsername(user User) bool {
+	if len(user.Username) > 0 {
+		return true
+	}
+	return false
 }
 
 func CreateUser(response http.ResponseWriter, request *http.Request) {
@@ -43,7 +49,6 @@ func writeUser() {
 	// Insert a new user
 	user := User{
 		Username: "john_doe",
-		Email:    "john@example.com",
 	}
 	err = insertUser(db, user)
 	if err != nil {
@@ -54,6 +59,6 @@ func writeUser() {
 
 func insertUser(db *sql.DB, user User) error {
 	query := "INSERT INTO users (username, email) VALUES (?, ?)"
-	_, err := db.Exec(query, user.Username, user.Email)
+	_, err := db.Exec(query, user.Username)
 	return err
 }
